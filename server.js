@@ -1,6 +1,6 @@
-// const { PrismaClient } = require('@prisma/client');
-// // const express = require('express');
-// const prisma = new PrismaClient();
+const { PrismaClient } = require('@prisma/client');
+const express = require('express');
+const prisma = new PrismaClient();
 
 
 // const app = express();
@@ -14,7 +14,7 @@ const appOne = require('./app')
 const PORT = process.env.PORT || 3000;
 appOne.listen(PORT, async () => {
   try {
-    // await prisma.$connect();
+    await prisma.$connect();
 
     console.log(`Server running on port ${PORT}`);
 
@@ -24,14 +24,14 @@ appOne.listen(PORT, async () => {
   }
 });
 
-// app.get('/',(req,res)=>{
-//   console.log("Test: it works")
-//   res.send("Hello: DONE")
-// })  
+appOne.get('/',(req,res)=>{
+  console.log("Test: it works")
+  res.send("Hello: DONE")
+})  
 
 
 // Graceful shutdown on process termination
 process.on('SIGINT', async () => {
-//   await prisma.$disconnect();
+  await prisma.$disconnect();
   process.exit(0);
 });
