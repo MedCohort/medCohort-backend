@@ -13,6 +13,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
 enum ActiveStatus{
   Active
   InActive
@@ -25,9 +26,34 @@ model Client {
     username     String
     email        String
     password     String
+    tel          String
     activeStatus ActiveStatus @default(Active)
     Last_login   DateTime?
     createdAt    DateTime    @default(now()) 
     updatedAt    DateTime    @updatedAt
-
 }
+
+model Writer {
+  id       Int   @id @default(autoincrement())
+  name     String
+  email    String  @unique
+  createdAt    DateTime    @default(now()) 
+  updatedAt    DateTime    @updatedAt
+  Last_login   DateTime?
+}
+
+model Admin {
+  id    Int     @id @default(autoincrement())
+  name  String
+  email String  @unique
+}
+
+model Support {
+  id    Int     @id @default(autoincrement())
+  name  String
+  email String  @unique
+}
+
+
+
+

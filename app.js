@@ -10,7 +10,7 @@ appOne.use(compression());
 appOne.use(cors());
 
 // Routes
-
+appOne.use('/auth', authRoutes)
 
 appOne.get('/',(req,res)=>{
     console.log(process.env.DATABASE_URL)
