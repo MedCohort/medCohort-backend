@@ -3,11 +3,15 @@ const bodyParser = require('body-parser');
 const compression = require('compression');
 const cors = require('cors');
 const appOne = express();
-
+const authRoutes = require('./src/routes/authRoutes')
 // Middleware
 appOne.use(bodyParser.json());
 appOne.use(compression());
-appOne.use(cors());
+appOne.use(cors({
+  origin: 'http://localhost:3000/', 
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], 
+  allowedHeaders: ['Content-Type', 'Authorization'], 
+}));
 
 // Routes
 appOne.use('/auth', authRoutes)
