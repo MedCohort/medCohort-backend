@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-async function register(req, res) {
+async function registerClient(req, res) {
     const { fullNames, username, email, password, tel } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -16,10 +16,23 @@ async function register(req, res) {
             tel,
         },
     });
+    console.log('success')
 
     res.json(client);
 }
 
+async function registerWriter(req, res) {
+    const { name, email } = req.body;
+    const client = await prisma.writer.create({
+        data: {
+            name,
+            email
+        },
+    });
+    console.log('success')
+
+    res.json(client);
+}
 
 
 async function login(req, res) {
@@ -39,4 +52,4 @@ async function login(req, res) {
     res.json({ message: 'Login successful', client });
 }
 
-module.exports = { register, login };
+module.exports = { registerClient,registerWriter, login };
