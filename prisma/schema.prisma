@@ -13,49 +13,105 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
-enum ActiveStatus{
-  Active
-  InActive
+enum ActiveStatus {
+  ACTIVE
+  INACTIVE
 }
 
+enum Deadline {
+  DEFAULT_DEADLINE
+  TWELVE_HOURS
+  TWENTY_FOUR_HOURS
+  TWO_DAYS
+  THREE_DAYS
+  FIVE_DAYS
+  SEVEN_DAYS
+  FOURTEEN_DAYS
+}
+
+enum Discipline {
+  ONE
+  TWO
+  THREE
+}
+
+enum Education {
+  BACHELOR
+  MASTER
+  PHD
+}
+
+enum Format {
+  APA
+  MLA
+  CHICAGO
+}
 
 model Client {
-    id    Int     @id @default(autoincrement())
-    fullNames    String
-    username     String
-    email        String
-    password     String
-    tel          String
-    activeStatus ActiveStatus @default(Active)
-    Last_login   DateTime?
-    createdAt    DateTime    @default(now()) 
-    updatedAt    DateTime    @updatedAt
+  id           Int          @id @default(autoincrement())
+  fullNames    String
+  username     String
+  email        String
+  password     String
+  tel          String
+  activeStatus ActiveStatus @default(ACTIVE)
+  lastLogin    DateTime?
+  createdAt    DateTime     @default(now()) 
+  updatedAt    DateTime     @updatedAt
 }
 
 model Writer {
-  id       Int   @id @default(autoincrement())
-  name     String
-  email    String  @unique
-  createdAt    DateTime    @default(now()) 
-  updatedAt    DateTime    @updatedAt
-  Last_login   DateTime?
+  id         Int          @id @default(autoincrement())
+  name       String
+  email      String       @unique
+  delegations Delegation[]
+  createdAt  DateTime     @default(now()) 
+  updatedAt  DateTime     @updatedAt
+  lastLogin  DateTime?
 }
 
 model Admin {
-  id    Int     @id @default(autoincrement())
-  name  String
-  email String  @unique
+  id         Int          @id @default(autoincrement())
+  name       String
+  email      String       @unique
+  delegations Delegation[]
 }
 
 model Support {
-  id    Int     @id @default(autoincrement())
-  name  String
-  email String  @unique
+  id         Int          @id @default(autoincrement())
+  name       String
+  email      String       @unique
 }
 
+model Assignment {
+  id            Int        @id @default(autoincrement())
+  title         String
+  description   String
+  deadline      Deadline   @default(DEFAULT_DEADLINE)
+  instructions  String
+  files         String?
+  pages         Int
+  typeOfPaper   String
+  discipline    Discipline @default(ONE)
+  qualityLevel  Education  @default(BACHELOR)
+  format        Format     @default(APA)
+  sources       Int
+  delegation    Delegation?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+}
 
-
-
-
-
+model Delegation {
+  id              Int        @id @default(autoincrement())
+  assignment      Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade) 
+  assignmentId    Int        @unique
+  writer          Writer     @relation(fields: [writerId], references: [id], onDelete: Cascade)
+  writerId        Int
+  admin           Admin      @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  adminId         Int
+  delegationDate  DateTime   @default(now())
+  status          String
+  remarks         String?
+  submissionDate  DateTime?
+  reviewDate      DateTime?
+}
