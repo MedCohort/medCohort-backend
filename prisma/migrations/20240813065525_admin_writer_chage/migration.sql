@@ -34,6 +34,7 @@ CREATE TABLE "Writer" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "email" TEXT NOT NULL,
+    "adminId" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "lastLogin" TIMESTAMP(3),
@@ -46,6 +47,10 @@ CREATE TABLE "Admin" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "email" TEXT NOT NULL,
+    "password" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "lastLogin" TIMESTAMP(3),
 
     CONSTRAINT "Admin_pkey" PRIMARY KEY ("id")
 );
@@ -73,6 +78,7 @@ CREATE TABLE "Assignment" (
     "qualityLevel" "Education" NOT NULL DEFAULT 'BACHELOR',
     "format" "Format" NOT NULL DEFAULT 'APA',
     "sources" INTEGER NOT NULL,
+    "clientId" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -105,6 +111,12 @@ CREATE UNIQUE INDEX "Support_email_key" ON "Support"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Delegation_assignmentId_key" ON "Delegation"("assignmentId");
+
+-- AddForeignKey
+ALTER TABLE "Writer" ADD CONSTRAINT "Writer_adminId_fkey" FOREIGN KEY ("adminId") REFERENCES "Admin"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Assignment" ADD CONSTRAINT "Assignment_clientId_fkey" FOREIGN KEY ("clientId") REFERENCES "Client"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Delegation" ADD CONSTRAINT "Delegation_assignmentId_fkey" FOREIGN KEY ("assignmentId") REFERENCES "Assignment"("id") ON DELETE CASCADE ON UPDATE CASCADE;

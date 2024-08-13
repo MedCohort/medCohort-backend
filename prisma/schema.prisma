@@ -55,6 +55,7 @@ model Client {
   password     String
   tel          String
   activeStatus ActiveStatus @default(ACTIVE)
+  assignments  Assignment[]
   lastLogin    DateTime?
   createdAt    DateTime     @default(now()) 
   updatedAt    DateTime     @updatedAt
@@ -64,6 +65,8 @@ model Writer {
   id         Int          @id @default(autoincrement())
   name       String
   email      String       @unique
+  admin      Admin        @relation(fields: [adminId], references: [id])
+  adminId    Int
   delegations Delegation[]
   createdAt  DateTime     @default(now()) 
   updatedAt  DateTime     @updatedAt
@@ -74,7 +77,12 @@ model Admin {
   id         Int          @id @default(autoincrement())
   name       String
   email      String       @unique
+  password   String
+  writers    Writer[]
   delegations Delegation[]
+  createdAt  DateTime     @default(now()) 
+  updatedAt  DateTime     @updatedAt
+  lastLogin  DateTime?
 }
 
 model Support {
@@ -96,6 +104,8 @@ model Assignment {
   qualityLevel  Education  @default(BACHELOR)
   format        Format     @default(APA)
   sources       Int
+  client        Client     @relation(fields: [clientId], references: [id]) // Add this line to establish the relationship
+  clientId      Int        
   delegation    Delegation?
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
