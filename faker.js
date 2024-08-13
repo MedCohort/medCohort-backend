@@ -2,22 +2,22 @@ const { PrismaClient}  = require('@prisma/client')
 const { faker } = require('@faker-js/faker');
 const prisma = new PrismaClient()
 
-// async function clientFaker(nums) {
+async function clientFaker(nums) {
 
-//     for(let i = 0;i < nums; i++){
-//         const client = await prisma.client.create({
-//             data: {
-//                 fullNames: faker.person.fullName(),
-//                 username: faker.internet.userName(),
-//                 email: faker.internet.email(),
-//                 password: faker.internet.password(),
-//                 tel: faker.phone.number(),
-//             },
-//         })
-//         console.log('Client created:', client)
-//         if(nums <= 0) break
-//     }
-// }
+    for(let i = 0;i < nums; i++){
+        const client = await prisma.client.create({
+            data: {
+                fullNames: faker.person.fullName(),
+                username: faker.internet.userName(),
+                email: faker.internet.email(),
+                password: faker.internet.password(),
+                tel: faker.phone.number(),
+            },
+        })
+        console.log('Client created:', client)
+        if(nums <= 0) break
+    }
+}
 
 
 
@@ -88,40 +88,40 @@ const prisma = new PrismaClient()
 //     }
 // }
 
-async function DelegationFaker(nums) {
-    for(let i = 0; i < nums; i++){
-        const assignment = await prisma.assignment.findFirst();
-        const writer = await prisma.writer.findFirst();
-        const admin = await prisma.admin.findFirst(); 
+// async function DelegationFaker(nums) {
+//     for(let i = 0; i < nums; i++){
+//         const assignment = await prisma.assignment.findFirst();
+//         const writer = await prisma.writer.findFirst();
+//         const admin = await prisma.admin.findFirst(); 
 
-        if (!assignment || !writer || !admin) {
-            console.error('No assignment, writer, or admin found. Please create them first.');
-            break;
-        }
+//         if (!assignment || !writer || !admin) {
+//             console.error('No assignment, writer, or admin found. Please create them first.');
+//             break;
+//         }
 
-        const delegation = await prisma.delegation.create({
-            data: {
-                assignmentId: faker.number.int({ min: 1, max: 7 }), 
-                writerId: faker.number.int({ min: 1, max: 10 }), 
-                adminId: 1, 
-                delegationDate: faker.date.past(),
-                status: faker.lorem.word(),
-                remarks: faker.lorem.sentence(),
-                submissionDate: faker.date.future(),
-                reviewDate: faker.date.future(),
-            }
-        })
-        console.log('Delegation created:', delegation)
-        if(nums <= 0) break
-    }
-}
+//         const delegation = await prisma.delegation.create({
+//             data: {
+//                 assignmentId: faker.number.int({ min: 1, max: 7 }), 
+//                 writerId: faker.number.int({ min: 1, max: 10 }), 
+//                 adminId: 1, 
+//                 delegationDate: faker.date.past(),
+//                 status: faker.lorem.word(),
+//                 remarks: faker.lorem.sentence(),
+//                 submissionDate: faker.date.future(),
+//                 reviewDate: faker.date.future(),
+//             }
+//         })
+//         console.log('Delegation created:', delegation)
+//         if(nums <= 0) break
+//     }
+// }
 
 
 
 const clients = 5
 
 
-DelegationFaker(clients)
+clientFaker(clients)
     .catch((error) => {
             console.error('Error generating fake data:', error);
         })

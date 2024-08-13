@@ -18,6 +18,7 @@ appOne.use(cors({
 appOne.use('/auth', authRoutes)
 appOne.use('/api', clientRoutes)
 
+
 appOne.get('/',(req,res)=>{
     console.log(process.env.DATABASE_URL)
     res.send("Hello: DONE")

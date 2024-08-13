@@ -4,7 +4,6 @@ const { registerClient,registerWriter, login } = require('../controllers/authCon
 const router = express.Router();
 
 
-console.log(registerWriter)
 router.post('/register', registerClient);
 router.post('/login', login);
 router.post('/writer', registerWriter);
