@@ -4,6 +4,7 @@ const compression = require('compression');
 const cors = require('cors');
 const appOne = express();
 const authRoutes = require('./src/routes/authRoutes')
+const clientRoutes = require('./src/routes/clientsRoutes')
 // Middleware
 appOne.use(bodyParser.json());
 appOne.use(compression());
@@ -15,6 +16,7 @@ appOne.use(cors({
 
 // Routes
 appOne.use('/auth', authRoutes)
+appOne.use('/api', clientRoutes)
 
 appOne.get('/',(req,res)=>{
     console.log(process.env.DATABASE_URL)
