@@ -36,7 +36,7 @@ async function newClient(req,res,next) {
    const { fullNames, username, email, password, tel} = req.body
 
    try{
-            // Check if user already exists - TO BE REDONE AFTER SCHEMA UPDATE
+        // Check if user already exists - TO BE REDONE AFTER SCHEMA UPDATE
         const userExists = await prisma.client.findUnique({
             where: {email}
         })
