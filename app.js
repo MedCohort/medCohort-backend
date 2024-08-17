@@ -6,6 +6,7 @@ const appOne = express();
 const authRoutes = require('./src/routes/authRoutes')
 const clientRoutes = require('./src/routes/clientsRoutes')
 const adminRoutes = require('./src/routes/adminRoutes')
+const writerRoutes = require('./src/routes/writerRoutes')
 
 // Middleware
 appOne.use(bodyParser.json());
@@ -20,6 +21,8 @@ appOne.use(cors({
 appOne.use('/auth', authRoutes)
 appOne.use('/api/client', clientRoutes)
 appOne.use('/api/admin', adminRoutes)
+appOne.use('/api/writer', writerRoutes)
+
 
 
 appOne.get('/',(req,res)=>{

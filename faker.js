@@ -21,20 +21,20 @@ const prisma = new PrismaClient()
 
 
 
-async function AdminFaker(nums) {
+// async function AdminFaker(nums) {
 
-    for(let i = 0;i < nums; i++){
-        const client = await prisma.admin.create({
-            data: {
-                name: faker.internet.userName(),
-                email: faker.internet.email(),
-                password: faker.internet.password(),
-                lastLogin: faker.date.past(),
-            },
-        })
-        console.log(' created Admin:', client)
-    }
-}
+//     for(let i = 0;i < nums; i++){
+//         const client = await prisma.admin.create({
+//             data: {
+//                 name: faker.internet.userName(),
+//                 email: faker.internet.email(),
+//                 password: faker.internet.password(),
+//                 lastLogin: faker.date.past(),
+//             },
+//         })
+//         console.log(' created Admin:', client)
+//     }
+// }
 
 
 
@@ -65,28 +65,28 @@ async function AdminFaker(nums) {
 // }
 
 
-// async function WriterFaker(nums) {
-//     for(let i = 0; i < nums; i++){
-//         const admin = await prisma.admin.findFirst(); // Assuming you have at least one admin in the database
+async function WriterFaker(nums) {
+    for(let i = 0; i < nums; i++){
+        const admin = await prisma.admin.findFirst(); // Assuming you have at least one admin in the database
 
-//         if (!admin) {
-//             console.error('No admin found. Please create an admin first.');
-//             break;
-//         }
+        if (!admin) {
+            console.error('No admin found. Please create an admin first.');
+            break;
+        }
 
-//         const writer = await prisma.writer.create({
-//             data: {
-//                 name: faker.person.fullName(),
-//                 email: faker.internet.email(),
-//                 adminId: 1, 
-//                 createdAt: faker.date.past(),
-//                 updatedAt: faker.date.recent(),
-//             }
-//         })
-//         console.log('Writer created:', writer)
-//         if(nums <= 0) break
-//     }
-// }
+        const writer = await prisma.writer.create({
+            data: {
+                name: faker.person.fullName(),
+                email: faker.internet.email(),
+                adminId: 1, 
+                createdAt: faker.date.past(),
+                updatedAt: faker.date.recent(),
+            }
+        })
+        console.log('Writer created:', writer)
+        if(nums <= 0) break
+    }
+}
 
 // async function DelegationFaker(nums) {
 //     for(let i = 0; i < nums; i++){
@@ -118,10 +118,10 @@ async function AdminFaker(nums) {
 
 
 
-const clients = 1
+const clients = 15
 
 
-AdminFaker(clients)
+WriterFaker(clients)
     .catch((error) => {
             console.error('Error generating fake data:', error);
         })
