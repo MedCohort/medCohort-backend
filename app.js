@@ -5,6 +5,8 @@ const cors = require('cors');
 const appOne = express();
 const authRoutes = require('./src/routes/authRoutes')
 const clientRoutes = require('./src/routes/clientsRoutes')
+const adminRoutes = require('./src/routes/adminRoutes')
+
 // Middleware
 appOne.use(bodyParser.json());
 appOne.use(compression());
@@ -16,7 +18,8 @@ appOne.use(cors({
 
 // Routes
 appOne.use('/auth', authRoutes)
-appOne.use('/api', clientRoutes)
+appOne.use('/api/client', clientRoutes)
+appOne.use('/api/admin', adminRoutes)
 
 
 appOne.get('/',(req,res)=>{

@@ -2,39 +2,39 @@ const { PrismaClient}  = require('@prisma/client')
 const { faker } = require('@faker-js/faker');
 const prisma = new PrismaClient()
 
-async function clientFaker(nums) {
-
-    for(let i = 0;i < nums; i++){
-        const client = await prisma.client.create({
-            data: {
-                fullNames: faker.person.fullName(),
-                username: faker.internet.userName(),
-                email: faker.internet.email(),
-                password: faker.internet.password(),
-                tel: faker.phone.number(),
-            },
-        })
-        console.log('Client created:', client)
-        if(nums <= 0) break
-    }
-}
-
-
-
-// async function AdminFaker(nums) {
+// async function clientFaker(nums) {
 
 //     for(let i = 0;i < nums; i++){
-//         const client = await prisma.admin.create({
+//         const client = await prisma.client.create({
 //             data: {
-//                 name: faker.internet.userName(),
+//                 fullNames: faker.person.fullName(),
+//                 username: faker.internet.userName(),
 //                 email: faker.internet.email(),
 //                 password: faker.internet.password(),
-//                 lastLogin: faker.date.past(),
+//                 tel: faker.phone.number(),
 //             },
 //         })
-//         console.log(' created Admin:', client)
+//         console.log('Client created:', client)
+//         if(nums <= 0) break
 //     }
 // }
+
+
+
+async function AdminFaker(nums) {
+
+    for(let i = 0;i < nums; i++){
+        const client = await prisma.admin.create({
+            data: {
+                name: faker.internet.userName(),
+                email: faker.internet.email(),
+                password: faker.internet.password(),
+                lastLogin: faker.date.past(),
+            },
+        })
+        console.log(' created Admin:', client)
+    }
+}
 
 
 
@@ -118,10 +118,10 @@ async function clientFaker(nums) {
 
 
 
-const clients = 5
+const clients = 1
 
 
-clientFaker(clients)
+AdminFaker(clients)
     .catch((error) => {
             console.error('Error generating fake data:', error);
         })
