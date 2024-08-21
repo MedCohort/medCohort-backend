@@ -38,55 +38,55 @@ const prisma = new PrismaClient()
 
 
 
-// async function AssignmentFaker(nums) {
+async function AssignmentFaker(nums) {
 
-//     for(let i = 0;i < nums; i++){
-//         const client = await prisma.assignment.create({
-//             data: {
-//                 title: faker.lorem.sentence(),
-//                 description: faker.lorem.paragraph(),
-//                 deadline: faker.helpers.arrayElement(['DEFAULT_DEADLINE', 'TWELVE_HOURS', 'TWENTY_FOUR_HOURS', 'TWO_DAYS', 'THREE_DAYS', 'FIVE_DAYS']),
-//                 instructions: faker.lorem.paragraph(),
-//                 files: faker.system.fileName(),
-//                 pages: faker.number.int({ min: 1, max: 100 }),
-//                 typeOfPaper: faker.lorem.word(),
-//                 discipline: faker.helpers.arrayElement(['ONE', 'TWO', 'THREE']),
-//                 qualityLevel: faker.helpers.arrayElement(['BACHELOR', 'MASTER', 'PHD']),
-//                 format: faker.helpers.arrayElement(['APA', 'MLA', 'CHICAGO']),
-//                 sources: faker.number.int({ min: 1, max: 20 }),
-//                 clientId: faker.number.int({ min: 1, max: 7}),
-//                 createdAt: faker.date.past(),
-//                 updatedAt: faker.date.recent(),
-//             }
-//         })
-//         console.log('Assignment created:', client)
-//         if(nums <= 0) break
-//     }
-// }
-
-
-async function WriterFaker(nums) {
-    for(let i = 0; i < nums; i++){
-        const admin = await prisma.admin.findFirst(); // Assuming you have at least one admin in the database
-
-        if (!admin) {
-            console.error('No admin found. Please create an admin first.');
-            break;
-        }
-
-        const writer = await prisma.writer.create({
+    for(let i = 0;i < nums; i++){
+        const client = await prisma.assignment.create({
             data: {
-                name: faker.person.fullName(),
-                email: faker.internet.email(),
-                adminId: 1, 
+                title: faker.lorem.sentence(),
+                description: faker.lorem.paragraph(),
+                deadline: faker.helpers.arrayElement(['DEFAULT_DEADLINE', 'TWELVE_HOURS', 'TWENTY_FOUR_HOURS', 'TWO_DAYS', 'THREE_DAYS', 'FIVE_DAYS']),
+                instructions: faker.lorem.paragraph(),
+                files: faker.system.fileName(),
+                pages: faker.number.int({ min: 1, max: 100 }),
+                typeOfPaper: faker.lorem.word(),
+                discipline: faker.helpers.arrayElement(['ONE', 'TWO', 'THREE']),
+                qualityLevel: faker.helpers.arrayElement(['BACHELOR', 'MASTER', 'PHD']),
+                format: faker.helpers.arrayElement(['APA', 'MLA', 'CHICAGO']),
+                sources: faker.number.int({ min: 1, max: 20 }),
+                clientId: faker.number.int({ min: 1, max: 7}),
                 createdAt: faker.date.past(),
                 updatedAt: faker.date.recent(),
             }
         })
-        console.log('Writer created:', writer)
+        console.log('Assignment created:', client)
         if(nums <= 0) break
     }
 }
+
+
+// async function WriterFaker(nums) {
+//     for(let i = 0; i < nums; i++){
+//         const admin = await prisma.admin.findFirst(); // Assuming you have at least one admin in the database
+
+//         if (!admin) {
+//             console.error('No admin found. Please create an admin first.');
+//             break;
+//         }
+
+//         const writer = await prisma.writer.create({
+//             data: {
+//                 name: faker.person.fullName(),
+//                 email: faker.internet.email(),
+//                 adminId: 1, 
+//                 createdAt: faker.date.past(),
+//                 updatedAt: faker.date.recent(),
+//             }
+//         })
+//         console.log('Writer created:', writer)
+//         if(nums <= 0) break
+//     }
+// }
 
 // async function DelegationFaker(nums) {
 //     for(let i = 0; i < nums; i++){
@@ -118,10 +118,10 @@ async function WriterFaker(nums) {
 
 
 
-const clients = 15
+const clients = 8
 
 
-WriterFaker(clients)
+AssignmentFaker(clients)
     .catch((error) => {
             console.error('Error generating fake data:', error);
         })
