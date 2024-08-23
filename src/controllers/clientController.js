@@ -1,5 +1,4 @@
 const { PrismaClient } = require('@prisma/client');
-const { validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 
 
@@ -25,48 +24,6 @@ async function allClient(req, res, next) {
     }
 }
 
-async function newClient(req,res,next) {
-   // Validate request data
-   const error = validationResult(req)
-   
-   if (!error.isEmpty()) {
-     return res.status(400).json({ errors: error.array() });
-   }
-
-   const { fullNames, username, email, password, tel} = req.body
-
-   try{
-        // Check if user already exists - TO BE REDONE AFTER SCHEMA UPDATE
-        const userExists = await prisma.client.findUnique({
-            where: {email}
-        })
-
-        if(userExists) {
-            return res.status(400).json({ message: 'User already exists' });
-        }
-        console.log('Past user existence check')
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        const client = await prisma.client.create({
-            data: {
-                fullNames,
-                username,
-                email,
-                password: hashedPassword,
-                tel
-            },
-        })
-
-        res.status(201).json({
-            message: "Client created successfully",
-            client
-        });
-
-   }
-   catch(err) {
-    res.status(500).json({ message: 'Internal server error' });
-   }
-}
 
 
 async function getClientById(req,res,next) {
@@ -145,6 +102,7 @@ async function deleteClient(req,res,next){
         if(!client) {
             return res.status(404).json({ message: 'Client not found' });
         }
+        console.log("Found client: Next step: Delete" )
 
         await prisma.client.delete({
             where: { id: parseInt(id, 10) },
@@ -160,7 +118,6 @@ async function deleteClient(req,res,next){
 
 module.exports = {
     allClient,
-    newClient,
     getClientById,
     updateClient,
     deleteClient

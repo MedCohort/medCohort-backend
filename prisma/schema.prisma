@@ -55,6 +55,8 @@ model Client {
   password     String
   tel          String
   activeStatus ActiveStatus @default(ACTIVE)
+  isEmailVerified    Boolean      @default(false)
+  emailVerificationToken String?
   assignments  Assignment[]
   lastLogin    DateTime?
   createdAt    DateTime     @default(now()) 
