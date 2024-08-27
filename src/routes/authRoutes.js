@@ -1,11 +1,12 @@
 // src/routes/authRoutes.js
 const express = require('express');
-const { registerClient,registerWriter, login } = require('../controllers/authController');
+const { newClient, login } = require('../controllers/authController');
+const {validateClientCreation} = require('../validators/clientValidator')
+
 const router = express.Router();
 
 
-router.post('/register', registerClient);
-router.post('/login', login);
-router.post('/writer', registerWriter);
+router.post('/registerClient', validateClientCreation,newClient);
+router.post('/loginClient', login);
 
 module.exports = router;

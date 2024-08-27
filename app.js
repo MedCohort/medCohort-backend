@@ -12,6 +12,7 @@ const assignmentRoutes = require('./src/routes/assignmentsRoutes')
 // Middleware
 appOne.use(bodyParser.json());
 appOne.use(compression());
+ 
 appOne.use(cors({
   origin: 'http://localhost:3000/', 
   methods: ['GET', 'POST', 'PUT', 'DELETE'], 
