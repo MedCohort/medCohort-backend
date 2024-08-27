@@ -17,7 +17,7 @@ const prisma = new PrismaClient();
 
 
 async function newClient(req, res, next) {
-    // Validate request data
+
     const error = validationResult(req)
     
     if (!error.isEmpty()) {
@@ -27,7 +27,7 @@ async function newClient(req, res, next) {
     const { fullNames, username, email, password, tel} = req.body
  
     try{
-         // Check if user already exists - TO BE REDONE AFTER SCHEMA UPDATE
+        
          const userExists = await prisma.client.findUnique({
              where: {email}
          })
@@ -36,6 +36,7 @@ async function newClient(req, res, next) {
              return res.status(400).json({ message: 'User already exists' });
          }
          console.log('Past user existence check')
+
          const hashedPassword = await bcrypt.hash(password, 10);
  
          const client = await prisma.client.create({
@@ -68,8 +69,8 @@ async function newClient(req, res, next) {
 // Function to send a welcome email
 async function sendWelcomeEmail(email, fullNames) {
     const msg = {
-        to: email, // Recipient's email
-        from: 'binamin.h.hassan14@gmail.com', // Your verified sender email
+        to: email, 
+        from: 'binamin.h.hassan14@gmail.com', 
         subject: 'Welcome to Our Service!',
         text: `Hello ${fullNames}, welcome to our service!`,
         html: `<strong>Hello ${fullNames}, welcome to our service!</strong>`,
@@ -83,16 +84,15 @@ async function sendWelcomeEmail(email, fullNames) {
         console.error('Error sending welcome email:', {
             message: error.message,
             stack: error.stack,
-            email, // Log the email address for context
-            fullNames // Log the recipient's name for context
+            email, 
+            fullNames 
         });    }
 }
 
-// Function to send a verification email
 async function sendVerificationEmail(email) {
     const msg = {
-        to: email, // Recipient's email
-        from: 'binamin.h.hassan14@gmail.com', // Your verified sender email
+        to: email, 
+        from: 'binamin.h.hassan14@gmail.com',
         subject: 'Email Verification',
         text: 'Please verify your email address.',
         html: '<strong>Please verify your email address.</strong>',
