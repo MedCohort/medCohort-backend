@@ -57,6 +57,8 @@ model Client {
   activeStatus ActiveStatus @default(ACTIVE)
   isEmailVerified    Boolean      @default(false)
   emailVerificationToken String?
+  resetPasswordToken String?
+  resetPasswordExpires   DateTime?
   assignments  Assignment[]
   lastLogin    DateTime?
   createdAt    DateTime     @default(now()) 
