@@ -1,0 +1,4 @@
+Auth Client
+ - Create account and send email to registered User
+ - emailVerificationToken to be sent
+ - reset password
