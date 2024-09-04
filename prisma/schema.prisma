@@ -69,6 +69,7 @@ model Writer {
   id         Int          @id @default(autoincrement())
   name       String
   email      String       @unique
+  password   String
   admin      Admin        @relation(fields: [adminId], references: [id])
   adminId    Int
   delegations Delegation[]
