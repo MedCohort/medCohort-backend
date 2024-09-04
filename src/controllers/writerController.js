@@ -2,10 +2,50 @@ const { PrismaClient } = require('@prisma/client');
 const { validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 const { write } = require('fs');
+const { send } = require('process');
+const nodemailer = require('nodemailer');
 
+
+
+
+const SMTP_USER = process.env.SMTP_USER
+const SMTP_PASS = process.env.SMTP_PASSWORD
 
 const prisma = new PrismaClient();
 
+const transporter = nodemailer.createTransport({
+    service: 'gmail', 
+    auth: {
+      user: SMTP_USER, 
+      pass: SMTP_PASS, 
+    },
+  });
+
+
+async function SendWelcomeEmailAndSetPassword(userEmail, Username){
+    const message = {
+        from: SMTP_USER, 
+        to: userEmail, 
+        subject: 'Welcome to Our Platform!', 
+        text: `Hi ${Username},\n\nWelcome to our platform! We're excited to have you on board.\n\nBest regards,\nThe Team`,
+        html: `
+          <h1>Welcome to Our Platform, ${Username}!</h1>
+          <p>We're excited to have you on board.</p>
+          <p>Feel free to explore and let us know if you need any help.</p>
+          <br/>
+          <p>Best regards,<br/>The Team</p>
+        `,
+      };
+    
+      try{
+        let info = await transporter.sendMail(message);
+        console.log('Email sent: ', info.response);
+      }
+      catch(error){
+        console.error('Error sending email: ', error) 
+        
+      }
+}
 
 async function allWriters(req, res, next) {
     console.log('Past findMany')
@@ -38,25 +78,29 @@ async function newWriter(req,res,next) {
      return res.status(400).json({ errors: error.array() });
    }
 
-   const { name, email} = req.body
+   const { name, email } = req.body
 
-   try{
+   try {
         // Check if user already exists - TO BE REDONE AFTER SCHEMA UPDATE
         const userExists = await prisma.writer.findUnique({
-            where: {email}
+            where: { email }
         })
 
-        if(userExists) {
+        if (userExists) {
             return res.status(400).json({ message: 'User already exists' });
         }
         console.log('Past user existence check')
-        // const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Set a default password
+        const defaultPassword = 'defaultPassword123'; // Change this to your desired default password
+        const hashedPassword = await bcrypt.hash(defaultPassword, 10); // Hash the default password
 
         const writer = await prisma.writer.create({
             data: {
                 name,
                 email,
-                adminId:1
+                password: hashedPassword, // Include the hashed password
+                adminId: 1
             },
         })
         console.log('Writer created')
@@ -66,9 +110,8 @@ async function newWriter(req,res,next) {
             writer
         });
 
-   }
-   catch(err) {
-    res.status(500).json({ message: 'Internal server error' });
+   } catch (err) {
+       res.status(500).json({ message: 'Internal server error' });
    }
 }
 
