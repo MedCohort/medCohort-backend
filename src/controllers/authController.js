@@ -107,7 +107,10 @@ async function newClient(req, res, next) {
 
          res.status(201).json({
              message: "Client created successfully",
-             client
+             client,
+             clientsAssgn: {
+                
+             }
          });
  
     }
@@ -189,22 +192,72 @@ async function login(req, res) {
         return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    // Here you can create a session or JWT token
-    const token = jwt.sign(
-        { id: client.id, email: client.email },      
-        process.env.JWT_SECRET,                  
-        { expiresIn: '1h' }                      
-      );
-    res.json({ 
+  
+    const accessToken = jwt.sign(
+        { id: client.id, email: client.email },
+        process.env.JWT_SECRET,
+        { expiresIn: '1h' } 
+    );
+
+    const refreshToken = jwt.sign(
+        { id: client.id, email: client.email },
+        process.env.JWT_SECRET,
+        { expiresIn: '7d' } 
+    );
+
+    res.cookie('token', accessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 3600000, 
+    });
+
+    res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 604800000,
+    });
+
+    res.json({
         message: 'Login successful',
-        token:  token,
-        client: {id: client.id, email: client.email}
-     });
+        client: { id: client.id, email: client.email },
+    });
+
 }
+
+const logOut = (req, res) => {
+    res.clearCookie('token', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 0, 
+    });
+    res.clearCookie('refreshToken');
+    res.status(200).json({ message: 'Logged out successfully' });
+}
+
+const checkAuth = (req, res) => {
+    const token = req.cookies.token;
+
+    if (!token) {
+        return res.status(401).json({ message: 'Access denied' });
+    }
+
+    try {
+        jwt.verify(token, process.env.JWT_SECRET);
+        return res.status(200).json({ authenticated: true });
+    } catch (err) {
+        res.status(401).json({ message: 'Access denied', error: err.message });
+    }
+}
+
 
 module.exports = { 
     newClient,
     resetPassword,
     requestResetPassword,  // For client
-    login
+    login,
+    checkAuth,
+    logOut
  };
