@@ -12,6 +12,7 @@ const appOne = require('./app')
 
 // Start the server
 const PORT = process.env.PORT || 3000;
+
 appOne.listen(PORT, async () => {
   try {
     await prisma.$connect();

@@ -235,7 +235,7 @@ const logOut = (req, res) => {
 const checkAuth = (req, res) => {
 	const token = req.cookies.token;
 
-	console.log('Token availablity(checkAuth):', token);
+	// console.log('Token availablity(checkAuth):', token);
 
 	if (!token) {
 		return res
