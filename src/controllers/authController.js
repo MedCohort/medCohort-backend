@@ -45,6 +45,8 @@ async function SendWelcomeEmail(userEmail, Username) {
 	}
 }
 
+
+
 async function SendResetPasswordEmail(userEmail, resetLink) {
 	const message = {
 		from: SMTP_USER,
@@ -62,6 +64,12 @@ async function SendResetPasswordEmail(userEmail, resetLink) {
 	}
 }
 
+const generateUsername = (fullName) => {
+	const baseUsername = fullName.split(' ')[0];
+	const randomSuffix = Math.floor(1000 + Math.random() * 9000);
+	return `${baseUsername}${randomSuffix}`;
+  };
+
 async function newClient(req, res, next) {
 	const error = validationResult(req);
 
@@ -69,7 +77,9 @@ async function newClient(req, res, next) {
 		return res.status(400).json({ errors: error.array() });
 	}
 
-	const { fullNames, username, email, password, tel } = req.body;
+	const { fullNames, email, password, tel } = req.body;
+
+	
 
 	try {
 		const userExists = await prisma.client.findUnique({
@@ -79,23 +89,50 @@ async function newClient(req, res, next) {
 		if (userExists) {
 			return res.status(400).json({ message: 'User already exists' });
 		}
-		console.log('Past user existence check');
 
 		const hashedPassword = await bcrypt.hash(password, 10);
+
+		const genUsername = generateUsername(fullNames)
+		
 
 		const client = await prisma.client.create({
 			data: {
 				fullNames,
-				username,
+				username: genUsername,
 				email,
 				password: hashedPassword,
 				tel,
 			},
 		});
-		console.log('Past user creation');
 
 		// Send welcome email
-		SendWelcomeEmail(email, username);
+		SendWelcomeEmail(email, fullNames);
+
+		const accessToken = jwt.sign(
+			{ id: client.id, email: client.email },
+			process.env.JWT_SECRET,
+			{ expiresIn: '1h' }
+		);
+	
+		const refreshToken = jwt.sign(
+			{ id: client.id, email: client.email },
+			process.env.JWT_SECRET,
+			{ expiresIn: '7d' }
+		);
+	
+		res.cookie('token', accessToken, {
+			httpOnly: true,
+			secure: process.env.NODE_ENV === 'production',
+			sameSite: 'lax',
+			maxAge: 36000000,
+		});
+	
+		res.cookie('refreshToken', refreshToken, {
+			httpOnly: true,
+			secure: process.env.NODE_ENV === 'production',
+			sameSite: 'lax',
+			maxAge: 604800000,
+		});
 
 		res.status(201).json({
 			message: 'Client created successfully',
@@ -205,7 +242,7 @@ async function login(req, res) {
 		httpOnly: true,
 		secure: process.env.NODE_ENV === 'production',
 		sameSite: 'lax',
-		maxAge: 3600000,
+		maxAge: 36000000,
 	});
 
 	res.cookie('refreshToken', refreshToken, {

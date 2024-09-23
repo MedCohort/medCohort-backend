@@ -11,6 +11,7 @@ router.get(
 	passportConfig.authenticate('jwt', { session: false }),
 	clients.getClientById
 );
+
 router.put('/updateClient/:id', validateClientUpdate, clients.updateClient);
 router.delete('/deleteClient/:id', clients.deleteClient);
 

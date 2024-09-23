@@ -23,10 +23,13 @@ async function allClient(req, res, next) {
 }
 
 async function getClientById(req, res, next) {
-	// console.log('request:', req.cookies);
+	
 	try {
 		const client = await prisma.client.findUnique({
 			where: { id: parseInt(req.user.id) },
+			include: {
+				assignments: true,
+			}
 		});
 		if (!client) {
 			return res.status(404).json({ message: 'Client not found' });
