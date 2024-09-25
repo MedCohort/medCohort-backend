@@ -5,10 +5,10 @@ CREATE TYPE "ActiveStatus" AS ENUM ('ACTIVE', 'INACTIVE');
 CREATE TYPE "Deadline" AS ENUM ('DEFAULT_DEADLINE', 'TWELVE_HOURS', 'TWENTY_FOUR_HOURS', 'TWO_DAYS', 'THREE_DAYS', 'FIVE_DAYS', 'SEVEN_DAYS', 'FOURTEEN_DAYS');
 
 -- CreateEnum
-CREATE TYPE "Discipline" AS ENUM ('ONE', 'TWO', 'THREE');
+CREATE TYPE "Discipline" AS ENUM ('ENGLISH_LITERATURE', 'BUSINESS_MANAGEMENT', 'HEALTH_SCIENCE_NURSING', 'HISTORY', 'PSYCHOLOGY_EDUCATION', 'ART_MUSIC_FILM_STUDIES', 'SOCIAL_POLITICAL_SCIENCE', 'SOCIOLOGY', 'PHILOSOPHY', 'MARKETING', 'RELIGIOUS_STUDIES', 'ECONOMICS', 'COMPUTER_SCIENCE_TECHNOLOGY', 'OTHER');
 
 -- CreateEnum
-CREATE TYPE "Education" AS ENUM ('BACHELOR', 'MASTER', 'PHD');
+CREATE TYPE "Education" AS ENUM ('HIGH_SCHOOL', 'COLLEGE', 'UNIVERSITY', 'MASTERS', 'PHD');
 
 -- CreateEnum
 CREATE TYPE "Format" AS ENUM ('APA', 'MLA', 'CHICAGO');
@@ -76,11 +76,11 @@ CREATE TABLE "Assignment" (
     "description" TEXT NOT NULL,
     "deadline" "Deadline" NOT NULL DEFAULT 'DEFAULT_DEADLINE',
     "instructions" TEXT NOT NULL,
-    "files" TEXT,
+    "files" TEXT[],
     "pages" INTEGER NOT NULL,
     "typeOfPaper" TEXT NOT NULL,
-    "discipline" "Discipline" NOT NULL DEFAULT 'ONE',
-    "qualityLevel" "Education" NOT NULL DEFAULT 'BACHELOR',
+    "discipline" "Discipline" NOT NULL DEFAULT 'OTHER',
+    "qualityLevel" "Education" NOT NULL DEFAULT 'UNIVERSITY',
     "format" "Format" NOT NULL DEFAULT 'APA',
     "sources" INTEGER NOT NULL,
     "clientId" INTEGER NOT NULL,
@@ -104,6 +104,9 @@ CREATE TABLE "Delegation" (
 
     CONSTRAINT "Delegation_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Client_username_key" ON "Client"("username");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Client_email_key" ON "Client"("email");

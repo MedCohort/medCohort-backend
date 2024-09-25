@@ -30,14 +30,27 @@ enum Deadline {
 }
 
 enum Discipline {
-  ONE
-  TWO
-  THREE
+  ENGLISH_LITERATURE
+  BUSINESS_MANAGEMENT
+  HEALTH_SCIENCE_NURSING
+  HISTORY
+  PSYCHOLOGY_EDUCATION
+  ART_MUSIC_FILM_STUDIES
+  SOCIAL_POLITICAL_SCIENCE
+  SOCIOLOGY
+  PHILOSOPHY
+  MARKETING
+  RELIGIOUS_STUDIES
+  ECONOMICS
+  COMPUTER_SCIENCE_TECHNOLOGY
+  OTHER
 }
 
 enum Education {
-  BACHELOR
-  MASTER
+  HIGH_SCHOOL
+  COLLEGE
+  UNIVERSITY
+  MASTERS
   PHD
 }
 
@@ -50,7 +63,7 @@ enum Format {
 model Client {
   id           Int          @id @default(autoincrement())
   fullNames    String
-  username     String
+  username     String       @unique
   email        String       @unique
   password     String
   tel          String
@@ -102,11 +115,11 @@ model Assignment {
   description   String
   deadline      Deadline   @default(DEFAULT_DEADLINE)
   instructions  String
-  files         String?
+  files         String[]
   pages         Int
   typeOfPaper   String
-  discipline    Discipline @default(ONE)
-  qualityLevel  Education  @default(BACHELOR)
+  discipline    Discipline @default(OTHER)
+  qualityLevel  Education  @default(UNIVERSITY)
   format        Format     @default(APA)
   sources       Int
   client        Client     @relation(fields: [clientId], references: [id]) // Add this line to establish the relationship
