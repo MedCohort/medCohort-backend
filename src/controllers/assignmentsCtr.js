@@ -42,8 +42,20 @@ async function getAssignmentsById(req,res,next){
 }
 
 async function newAssignment(req, res, next) {
-    const { title, description, deadline, instructions, files, pages, typeOfPaper, discipline, qualityLevel, format, sources, clientId } = req.body;
-
+    const {
+        title,
+        description = "no description provided",   
+        deadline,      
+        instructions = "Follow standard procedure",  
+        files = null,           
+        pages = 1,            
+        typeOfPaper = "Custom Writing",  
+        discipline = "OTHER",    
+        qualityLevel = "BACHELOR",  
+        format = "APA",        
+        sources = 1,          
+        clientId
+    } = req.body;
     try {
         const assignment = await prisma.assignment.create({
             data: {

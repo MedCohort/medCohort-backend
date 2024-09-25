@@ -47,14 +47,32 @@ async function AssignmentFaker(nums) {
                 description: faker.lorem.paragraph(),
                 deadline: faker.helpers.arrayElement(['DEFAULT_DEADLINE', 'TWELVE_HOURS', 'TWENTY_FOUR_HOURS', 'TWO_DAYS', 'THREE_DAYS', 'FIVE_DAYS']),
                 instructions: faker.lorem.paragraph(),
-                files: faker.system.fileName(),
+                files: [
+                    "assignment1.docx",
+                    "research_paper.pdf",
+                  ],
                 pages: faker.number.int({ min: 1, max: 100 }),
                 typeOfPaper: faker.lorem.word(),
-                discipline: faker.helpers.arrayElement(['ONE', 'TWO', 'THREE']),
-                qualityLevel: faker.helpers.arrayElement(['BACHELOR', 'MASTER', 'PHD']),
+                discipline: faker.helpers.arrayElement([
+                    'ENGLISH_LITERATURE',
+                    'BUSINESS_MANAGEMENT',
+                    'HEALTH_SCIENCE_NURSING',
+                    'HISTORY',
+                    'PSYCHOLOGY_EDUCATION',
+                    'ART_MUSIC_FILM_STUDIES',
+                    'SOCIAL_POLITICAL_SCIENCE',
+                    'SOCIOLOGY',
+                    'PHILOSOPHY',
+                    'MARKETING',
+                    'RELIGIOUS_STUDIES',
+                    'ECONOMICS',
+                    'COMPUTER_SCIENCE_TECHNOLOGY',
+                    'OTHER'
+                  ]),
+                qualityLevel: faker.helpers.arrayElement(['HIGH_SCHOOL','COLLEGE','UNIVERSITY','MASTERS', 'PHD']),
                 format: faker.helpers.arrayElement(['APA', 'MLA', 'CHICAGO']),
                 sources: faker.number.int({ min: 1, max: 20 }),
-                clientId: faker.number.int({ min: 1, max: 7}),
+                clientId: faker.number.int({ min: 1, max: 5}),
                 createdAt: faker.date.past(),
                 updatedAt: faker.date.recent(),
             }
@@ -119,7 +137,7 @@ async function AssignmentFaker(nums) {
 
 
 
-const clients = 10
+const clients = 7
 
 
 AssignmentFaker(clients)
