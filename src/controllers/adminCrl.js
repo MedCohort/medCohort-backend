@@ -1,6 +1,7 @@
 const { PrismaClient } = require('@prisma/client');
 const { validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 
 const prisma = new PrismaClient();
@@ -50,15 +51,31 @@ async function newAdmin(req,res,next) {
         console.log('Past user existence check')
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const client = await prisma.admin.create({
+        const admin = await prisma.admin.create({
             data: {
                 name,
                 email,
                 password: hashedPassword,
-             
             },
         })
-        console.log('Client created')
+        
+        const adminToken = jwt.sign(
+            {
+                id: admin.id,
+                email: admin.email,
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' }
+        )
+
+        const adminResetToken = jwt.sign(
+            {
+                id: admin.id,
+                email: admin.email,
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: '7d' }
+        )
 
         res.status(201).json({
             message: "Admin created successfully",
