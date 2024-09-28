@@ -290,6 +290,9 @@ const checkAuth = (req, res) => {
 	}
 };
 
+// ADMIN AUTH
+
+
 module.exports = {
 	newClient,
 	resetPassword,
