@@ -10,6 +10,8 @@ const clientRoutes = require('./src/routes/clientsRoutes')
 const adminRoutes = require('./src/routes/adminRoutes')
 const writerRoutes = require('./src/routes/writerRoutes')
 const assignmentRoutes = require('./src/routes/assignmentsRoutes')
+const { swaggerUi, swaggerDocs } = require('./src/config/swagger'); // Adjust the path accordingly
+
 
 // Middleware
 appOne.use(cookieParser());
@@ -40,6 +42,9 @@ appOne.use('/api/client', clientRoutes)
 appOne.use('/api/admin', adminRoutes)
 appOne.use('/api/writer', writerRoutes)
 appOne.use('/api/assignments', assignmentRoutes)
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
 
 
 
