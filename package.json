@@ -1,6 +1,7 @@
 {
   "scripts": {
     "start": "node server.js",
+    "postdeploy": "prisma migrate deploy",
     "dev": "nodemon"
   },
   "dependencies": {
