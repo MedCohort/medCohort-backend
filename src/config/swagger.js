@@ -11,7 +11,7 @@ const swaggerOptions = {
         },
         servers: [
             {
-                url: 'http://localhost:3000', // Change this to your server URL
+                url: 'https://medcohort-backend.onrender.com/', 
             },
         ],
     },
