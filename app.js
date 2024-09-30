@@ -43,7 +43,7 @@ appOne.use('/api/admin', adminRoutes)
 appOne.use('/api/writer', writerRoutes)
 appOne.use('/api/assignments', assignmentRoutes)
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+appOne.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 
 
