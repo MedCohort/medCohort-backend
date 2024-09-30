@@ -77,6 +77,13 @@ async function newAdmin(req,res,next) {
             { expiresIn: '7d' }
         )
 
+        res.cookie('adminToken', adminToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            maxAge: 3600000, // 1 hour
+        });
+        
         res.status(201).json({
             message: "Admin created successfully",
             client
