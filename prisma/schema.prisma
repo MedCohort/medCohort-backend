@@ -6,6 +6,8 @@
 
 generator client {
   provider = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-1.1.x"]
+
 }
 
 datasource db {
@@ -67,6 +69,7 @@ model Client {
   email        String       @unique
   password     String
   tel          String
+  role       String       @default("client")
   activeStatus ActiveStatus @default(ACTIVE)
   isEmailVerified    Boolean      @default(false)
   emailVerificationToken String?
@@ -96,6 +99,7 @@ model Admin {
   name       String
   email      String       @unique
   password   String
+  role       String       @default("admin")
   writers    Writer[]
   delegations Delegation[]
   createdAt  DateTime     @default(now()) 
