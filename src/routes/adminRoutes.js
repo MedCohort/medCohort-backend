@@ -48,6 +48,8 @@ router.get('/allAdmins', adminController.allAdmins); // Ensure this matches the 
  *       500:
  *         description: Internal server error
  */
-router.post('/addAdmin', validateAdminCreation, adminController.newAdmin);
+router.post('/auth/addAdmin', validateAdminCreation, adminController.newAdmin);
+
+router.post('/auth/adminLogin', adminController.adminLogin)
 
 module.exports = router;

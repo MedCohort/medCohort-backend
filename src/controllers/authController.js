@@ -227,13 +227,21 @@ async function login(req, res) {
 	}
 
 	const accessToken = jwt.sign(
-		{ id: client.id, email: client.email },
+		{ 
+			id: client.id, 
+			email: client.email,
+			role:'client'
+		 },
 		process.env.JWT_SECRET,
 		{ expiresIn: '1h' }
 	);
 
 	const refreshToken = jwt.sign(
-		{ id: client.id, email: client.email },
+		{ 
+			id: client.id, 
+			email: client.email,
+			role:'client'
+		 },
 		process.env.JWT_SECRET,
 		{ expiresIn: '7d' }
 	);

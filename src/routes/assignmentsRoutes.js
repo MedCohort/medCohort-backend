@@ -27,14 +27,23 @@ const assignments = require('../controllers/assignmentsCtr')
  *         description: Internal server error
  */
 router.get('/allAssignments', (req, res, next) => {
-    passport.authenticate('jwt', { session: false }, (err, user, info) => {
-      if (err || !user) {
-        return res.status(401).json({ message: 'Unauthorized access' });
-      }
-      req.user = user;
-      next();
-    })(req, res, next);
-  }, assignments.allAssignments);
+  passport.authenticate('jwt', { session: false }, (err, user, info) => {
+    console.log(user, "test at passport")
+
+    if (err || !user) {
+      return res.status(401).json({ message: 'Unauthorized access' });
+    }
+
+    // Check if the user is a client or admin
+    if (user.role !== 'client' && user.role !== 'admin') {
+      return res.status(403).json({ message: 'Forbidden: Access denied' });
+    }
+
+    req.user = user;
+    next();
+  })(req, res, next);
+}, assignments.allAssignments);
+
 
 /**
  * @swagger

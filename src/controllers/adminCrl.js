@@ -83,15 +83,23 @@ async function newAdmin(req,res,next) {
             sameSite: 'lax',
             maxAge: 3600000, // 1 hour
         });
+
+        res.cookie('adminResetToken', adminResetToken,{
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            maxAge: 604800000, // 1 week
+        })
         
         res.status(201).json({
             message: "Admin created successfully",
-            client
+            admin
         });
 
    }
    catch(err) {
-    res.status(500).json({ message: 'Internal server error' });
+        console.error('Error:', err.message);
+        res.status(400).send('Invalid JSON');
    }
 }
 
@@ -185,9 +193,55 @@ async function newAdmin(req,res,next) {
 
 // }
 
+async function adminLogin(req, res, next) {
+    const {email, password } = req.body;
+
+    try {
+        const admin = await prisma.admin.findUnique({ where: { email } });
+
+        if (!admin) {
+            return res.status(401).json({ message: 'Invalid email or password' });
+        }
+
+        const isPasswordValid = await bcrypt.compare(password, admin.password);
+
+        if (!isPasswordValid) {
+            return res.status(401).json({ message: 'Invalid email or password' });
+        }
+
+        const adminToken = jwt.sign(
+            {
+                id: admin.id,
+                email: admin.email,
+                role: 'admin'
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' }
+        )
+
+        res.cookie('adminToken', adminToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+			maxAge: 36000000,
+            })
+
+        res.json({
+            message: 'Login successful',
+            admin: { id: admin.id, email: admin.email },
+        });
+
+    }
+    catch(e){
+
+    }
+}
+
+
+
 
 module.exports = {
     allAdmins,
-    newAdmin
+    newAdmin,
+    adminLogin
 }
-
