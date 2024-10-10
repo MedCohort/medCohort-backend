@@ -1,13 +1,13 @@
-FROM node:16
+FROM node:20
 
 WORKDIR /usr/src/app
 
 
-Copy package*.json ./
+COPY package*.json ./
 
 RUN npm install
 
-Copy . .
+COPY . .
 
 EXPOSE 3000
 
