@@ -3,6 +3,7 @@ const router = express.Router();
 const adminController = require('../controllers/adminCrl');
 const { validateAdminCreation } = require('../validators/adminValidator');
 
+
 /**
  * @swagger
  * /api/admin/allAdmins:
@@ -51,5 +52,9 @@ router.get('/allAdmins', adminController.allAdmins); // Ensure this matches the 
 router.post('/auth/addAdmin', validateAdminCreation, adminController.newAdmin);
 
 router.post('/auth/adminLogin', adminController.adminLogin)
+
+router.get('/dash', adminController.adminDashView)
+
+router.post('/test', adminController.testPost)
 
 module.exports = router;
