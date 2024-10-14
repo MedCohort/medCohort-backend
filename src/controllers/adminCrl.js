@@ -237,11 +237,45 @@ async function adminLogin(req, res, next) {
     }
 }
 
+async function adminDashView(req, res, next){
+    console.log("entry")
+    try {
+        const[clientsCount, assgnmntCount,writerCount, allClients, allAssgnmnt, allWriters] = await Promise.all([
+            prisma.client.count(),
+            prisma.assignment.count(),
+            prisma.writer.count(),
+            prisma.client.findMany(),
+            prisma.assignment.findMany(),
+            prisma.writer.findMany()
+        ])
+        
+        res.json({
+            message: 'Dashboard view retrieved successfully',
+            clientsCount, assgnmntCount,writerCount, allClients, allAssgnmnt, allWriters
+        });
+    } catch (error) {
+        console.error("nomaaa!");
+        res.status(500).json({ message: 'Internal server error' });
+    }
+
+}
+
+async function testPost(req, res, next) {
+    console.log('test');
+    const { name, } = req.body
+    console.log(name, email, password)
+    res.json({ message: 'Test POST request received', data: req.body });
+}
+
+
+
 
 
 
 module.exports = {
     allAdmins,
     newAdmin,
-    adminLogin
+    adminLogin,
+    adminDashView,
+    testPost
 }
