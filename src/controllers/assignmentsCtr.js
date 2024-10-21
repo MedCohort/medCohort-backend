@@ -143,6 +143,11 @@ async function deleteAssignment(req, res, next) {
     }
 }
 
+async function testAssignment(req, res, next) {
+    console.log("test post")
+    res.json({message: 'test post'})
+}
+
 
 
 module.exports = {
@@ -150,6 +155,7 @@ module.exports = {
     getAssignmentsById,
     deleteAssignment,
     newAssignment,
-    updateAssignment
+    updateAssignment,
+    testAssignment,
 
 }

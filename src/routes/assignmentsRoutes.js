@@ -2,7 +2,8 @@ const express = require('express')
 const router = express.Router()
 const passport = require('../config/passport')
 
-const assignments = require('../controllers/assignmentsCtr')
+const assignments = require('../controllers/assignmentsCtr');
+const { route } = require('./adminRoutes');
 
 
 /**
@@ -26,8 +27,9 @@ const assignments = require('../controllers/assignmentsCtr')
  *       500:
  *         description: Internal server error
  */
+
 router.get('/allAssignments', (req, res, next) => {
-  passport.authenticate('jwt', { session: false }, (err, user, info) => {
+  passport.authenticate('user-jwt', { session: false }, (err, user, info) => {
     console.log(user, "test at passport")
 
     if (err || !user) {
@@ -191,5 +193,7 @@ router.put('/updateAssignment/:id', assignments.updateAssignment);
  *         description: Internal server error
  */
 router.delete('/deleteAssignment/:id', assignments.deleteAssignment);
+
+router.get('/test', assignments.testAssignment)
 
 module.exports = router
