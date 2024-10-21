@@ -34,5 +34,8 @@ appOne.get('/',(req,res)=>{
 // Graceful shutdown on process termination
 process.on('SIGINT', async () => {
   await prisma.$disconnect();
+  await prisma.$connect();
+
   process.exit(0);
+  
 });

@@ -109,13 +109,18 @@ async function newClient(req, res, next) {
 		SendWelcomeEmail(email, fullNames);
 
 		const accessToken = jwt.sign(
-			{ id: client.id, email: client.email },
+			{ 
+				id: client.id, email: client.email },
 			process.env.JWT_SECRET,
 			{ expiresIn: '1h' }
 		);
 	
 		const refreshToken = jwt.sign(
-			{ id: client.id, email: client.email },
+			{ 
+				id: client.id, 
+				email: client.email,
+				role:'client'
+			 },
 			process.env.JWT_SECRET,
 			{ expiresIn: '7d' }
 		);

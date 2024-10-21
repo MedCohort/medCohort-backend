@@ -260,14 +260,62 @@ async function adminDashView(req, res, next){
 
 }
 
-async function testPost(req, res, next) {
-    console.log('test');
-    const { name, } = req.body
-    console.log(name, email, password)
-    res.json({ message: 'Test POST request received', data: req.body });
+
+async function delegateAssgnmt(req, res, next) {
+    const { adminId, assignmentId, writerId } = req.body;
+
+     console.log({
+         adminId, assignmentId, writerId
+     })
+
+    
+     // Check if all required parameters are present
+    if (!adminId || !assignmentId || !writerId) {
+        return res.status(400).json({ message: 'Missing required fields' });
+    }
+
+    try {
+        const admin = await prisma.admin.findUnique({ where: { id: adminId } });
+        if (!admin) {
+            return res.status(401).json({ message: 'Admin not found' });
+        }
+
+        const assgnmnt = await prisma.assignment.findUnique({ where: { id: assignmentId } });
+        if (!assgnmnt) {
+            return res.status(404).json({ message: 'Assignment not found' });
+        }
+
+        const writer = await prisma.writer.findUnique({ where: { id: writerId } });
+        if (!writer) {
+            return res.status(404).json({ message: 'Writer not found' });
+        }
+
+        await prisma.delegation.create({
+            data: {
+                adminId: admin.id || 1,
+                assignmentId: assgnmnt.id,
+                writerId: writer.id,
+                delegationDate: new Date()
+            },
+        });
+
+        await prisma.assignment.update({
+            where: { id: assgnmnt.id },
+            data: { status: 'DELEGATED' },
+        });
+
+        res.json({ message: 'Assignment delegated successfully', admin: admin.name });
+    } catch (error) {
+        console.error('Error:', error.message);
+        res.status(500).json({ message: 'Internal server error' });
+    }
 }
 
 
+async function testPost(req, res, next){
+    console.log("test post")
+    res.json({message: 'test post'})
+}
 
 
 
@@ -277,5 +325,6 @@ module.exports = {
     newAdmin,
     adminLogin,
     adminDashView,
-    testPost
+    testPost,
+    delegateAssgnmt
 }

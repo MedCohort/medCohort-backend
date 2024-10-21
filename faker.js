@@ -38,74 +38,74 @@ const prisma = new PrismaClient()
 
 
 
-async function AssignmentFaker(nums) {
+// async function AssignmentFaker(nums) {
 
-    for(let i = 0;i < nums; i++){
-        const client = await prisma.assignment.create({
-            data: {
-                title: faker.lorem.sentence(),
-                description: faker.lorem.paragraph(),
-                deadline: faker.helpers.arrayElement(['DEFAULT_DEADLINE', 'TWELVE_HOURS', 'TWENTY_FOUR_HOURS', 'TWO_DAYS', 'THREE_DAYS', 'FIVE_DAYS']),
-                instructions: faker.lorem.paragraph(),
-                files: [
-                    "assignment1.docx",
-                    "research_paper.pdf",
-                  ],
-                pages: faker.number.int({ min: 1, max: 100 }),
-                typeOfPaper: faker.lorem.word(),
-                discipline: faker.helpers.arrayElement([
-                    'ENGLISH_LITERATURE',
-                    'BUSINESS_MANAGEMENT',
-                    'HEALTH_SCIENCE_NURSING',
-                    'HISTORY',
-                    'PSYCHOLOGY_EDUCATION',
-                    'ART_MUSIC_FILM_STUDIES',
-                    'SOCIAL_POLITICAL_SCIENCE',
-                    'SOCIOLOGY',
-                    'PHILOSOPHY',
-                    'MARKETING',
-                    'RELIGIOUS_STUDIES',
-                    'ECONOMICS',
-                    'COMPUTER_SCIENCE_TECHNOLOGY',
-                    'OTHER'
-                  ]),
-                qualityLevel: faker.helpers.arrayElement(['HIGH_SCHOOL','COLLEGE','UNIVERSITY','MASTERS', 'PHD']),
-                format: faker.helpers.arrayElement(['APA', 'MLA', 'CHICAGO']),
-                sources: faker.number.int({ min: 1, max: 20 }),
-                clientId: faker.number.int({ min: 1, max: 5}),
-                createdAt: faker.date.past(),
-                updatedAt: faker.date.recent(),
-            }
-        })
-        console.log('Assignment created:', client)
-        if(nums <= 0) break
-    }
-}
-
-
-// async function WriterFaker(nums) {
-//     for(let i = 0; i < nums; i++){
-//         const admin = await prisma.admin.findFirst(); // Assuming you have at least one admin in the database
-
-//         if (!admin) {
-//             console.error('No admin found. Please create an admin first.');
-//             break;
-//         }
-
-//         const writer = await prisma.writer.create({
+//     for(let i = 0;i < nums; i++){
+//         const client = await prisma.assignment.create({
 //             data: {
-//                 name: faker.person.fullName(),
-//                 email: faker.internet.email(),
-//                 password: faker.internet.password(),
-//                 adminId: 1, 
+//                 title: faker.lorem.sentence(),
+//                 description: faker.lorem.paragraph(),
+//                 deadline: faker.helpers.arrayElement(['DEFAULT_DEADLINE', 'TWELVE_HOURS', 'TWENTY_FOUR_HOURS', 'TWO_DAYS', 'THREE_DAYS', 'FIVE_DAYS']),
+//                 instructions: faker.lorem.paragraph(),
+//                 files: [
+//                     "assignment1.docx",
+//                     "research_paper.pdf",
+//                   ],
+//                 pages: faker.number.int({ min: 1, max: 100 }),
+//                 typeOfPaper: faker.lorem.word(),
+//                 discipline: faker.helpers.arrayElement([
+//                     'ENGLISH_LITERATURE',
+//                     'BUSINESS_MANAGEMENT',
+//                     'HEALTH_SCIENCE_NURSING',
+//                     'HISTORY',
+//                     'PSYCHOLOGY_EDUCATION',
+//                     'ART_MUSIC_FILM_STUDIES',
+//                     'SOCIAL_POLITICAL_SCIENCE',
+//                     'SOCIOLOGY',
+//                     'PHILOSOPHY',
+//                     'MARKETING',
+//                     'RELIGIOUS_STUDIES',
+//                     'ECONOMICS',
+//                     'COMPUTER_SCIENCE_TECHNOLOGY',
+//                     'OTHER'
+//                   ]),
+//                 qualityLevel: faker.helpers.arrayElement(['HIGH_SCHOOL','COLLEGE','UNIVERSITY','MASTERS', 'PHD']),
+//                 format: faker.helpers.arrayElement(['APA', 'MLA', 'CHICAGO']),
+//                 sources: faker.number.int({ min: 1, max: 20 }),
+//                 clientId: faker.number.int({ min: 1, max: 5}),
 //                 createdAt: faker.date.past(),
 //                 updatedAt: faker.date.recent(),
 //             }
 //         })
-//         console.log('Writer created:', writer)
+//         console.log('Assignment created:', client)
 //         if(nums <= 0) break
 //     }
 // }
+
+
+async function WriterFaker(nums) {
+    for(let i = 0; i < nums; i++){
+        const admin = await prisma.admin.findFirst(); // Assuming you have at least one admin in the database
+
+        if (!admin) {
+            console.error('No admin found. Please create an admin first.');
+            break;
+        }
+
+        const writer = await prisma.writer.create({
+            data: {
+                name: faker.person.fullName(),
+                email: faker.internet.email(),
+                password: faker.internet.password(),
+                adminId: 1, 
+                createdAt: faker.date.past(),
+                updatedAt: faker.date.recent(),
+            }
+        })
+        console.log('Writer created:', writer)
+        if(nums <= 0) break
+    }
+}
 
 // async function DelegationFaker(nums) {
 //     for(let i = 0; i < nums; i++){
@@ -140,7 +140,7 @@ async function AssignmentFaker(nums) {
 const clients = 7
 
 
-AssignmentFaker(clients)
+WriterFaker(clients)
     .catch((error) => {
             console.error('Error generating fake data:', error);
         })

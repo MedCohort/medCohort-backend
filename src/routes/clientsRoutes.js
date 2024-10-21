@@ -37,7 +37,7 @@ router.get('/allClient', clients.allClient);
  */
 router.get(
     '/getClient',
-    passportConfig.authenticate('jwt', { session: false }),
+    passportConfig.authenticate('writer-jwt', { session: false }),
     clients.getClientById
 );
 

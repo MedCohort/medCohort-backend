@@ -22,7 +22,7 @@ const transporter = nodemailer.createTransport({
   });
 
 
-async function SendWelcomeEmailAndSetPassword(userEmail, Username){
+async function SendWelcomeEmailAndSetPassword(userEmail, Username, passwordResetLink){
     const message = {
         from: SMTP_USER, 
         to: userEmail, 
@@ -31,6 +31,8 @@ async function SendWelcomeEmailAndSetPassword(userEmail, Username){
         html: `
           <h1>Welcome to Our Platform, ${Username}!</h1>
           <p>We're excited to have you on board.</p>
+          <p>Your current default password is defaultPassword123</p>
+          <p>You requested a password reset. Click the link to reset your password: ${passwordResetLink}</p>
           <p>Feel free to explore and let us know if you need any help.</p>
           <br/>
           <p>Best regards,<br/>The Team</p>
@@ -78,10 +80,16 @@ async function newWriter(req,res,next) {
      return res.status(400).json({ errors: error.array() });
    }
 
-   const { name, email } = req.body
+   const { name, email,adminId } = req.body
 
    try {
-        // Check if user already exists - TO BE REDONE AFTER SCHEMA UPDATE
+
+        const admin = await prisma.admin.findUnique({ where: { id: adminId } });
+        if (!admin) {
+            return res.status(400).json({ message: 'Admin not found. Please create an admin before adding a writer.' });
+        }
+
+
         const userExists = await prisma.writer.findUnique({
             where: { email }
         })
@@ -91,19 +99,40 @@ async function newWriter(req,res,next) {
         }
         console.log('Past user existence check')
 
-        // Set a default password
-        const defaultPassword = 'defaultPassword123'; // Change this to your desired default password
-        const hashedPassword = await bcrypt.hash(defaultPassword, 10); // Hash the default password
+
+        const defaultPassword = 'defaultPassword123'; 
+        const hashedPassword = await bcrypt.hash(defaultPassword, 10); 
 
         const writer = await prisma.writer.create({
             data: {
                 name,
                 email,
-                password: hashedPassword, // Include the hashed password
-                adminId: 1
+                password: hashedPassword, 
+                adminId: admin.id
             },
         })
         console.log('Writer created')
+
+        const writerToken  = jwt.sign(
+            {email: writer.email},
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' } 
+        )
+        
+        console.log(writerToken);
+
+        const welcomelink = `http://localhost:3000/api/writer/resetpassword/{writerToken}`
+
+        await prisma.writer.update({
+            where: { email: writer.email },
+            data: {
+                resetPasswordToken: writerToken,
+                resetPasswordExpires: new Date(Date.now() + 3600000), 
+            },
+        });
+
+        SendWelcomeEmailAndSetPassword(writer.email,writer.name, welcomelink)
+
 
         res.status(201).json({
             message: "Writer created successfully",
@@ -115,6 +144,52 @@ async function newWriter(req,res,next) {
    }
 }
 
+
+async function passSetUp(req, res, next){
+    const {writerToken} = req.params
+    const { password } = req.body;
+    const {defaultPassword} = req.body
+
+    if (!writerToken) {
+        return res.status(400).json({ message: 'Token must be provided' });
+    }
+
+    try {
+        const decoded = jwt.verify(writerToken, process.env.JWT_SECRET)
+
+        const writer = await prisma.writer.findUnique(
+            {
+                where: { email: decoded.email }
+            }
+        )
+
+        if (!writer) {
+            return res.status(400).json({ message: 'Invalid or expired token' });
+        }
+
+        const isValidPassword = await bcrypt.compare(defaultPassword, writer.password)
+
+        if (!isValidPassword) {
+            return res.status(400).json({ message: 'Invalid or expired token' });
+        }
+
+        if (writer.resetPasswordToken!== writerToken || writer.resetPasswordExpires < new Date()) {
+            return res.status(400).json({ message: 'Invalid or expired token' });
+        }
+
+        const hashedPass = await bcrypt.hash(password, 10)
+
+        await prisma.writer.update({
+            where: { id: writer.id },
+            data: { password: hashedPass, resetPasswordToken: null, resetPasswordExpires: null },
+        });
+    } catch (error) {
+        return res.status(500).json({ message: 'Internal server error' });
+
+    }
+
+    
+}
 
 async function getWriterById(req,res,next) {
     try {
@@ -134,6 +209,7 @@ async function getWriterById(req,res,next) {
          res.status(500).json({ message: 'Internal server error' });
     }
 }
+
 
 async function updateWriter(req, res, next) {
     console.log('Func entry')
@@ -202,12 +278,56 @@ async function deleteWriter(req,res,next){
 
 }
 
+async function writerLogin(req, res, next){
+    const { email, password } = req.body;
+
+    try {
+        const writer = await prisma.writer.findUnique({
+            where: { email },
+        });
+
+        if (!writer) {
+            return res.status(401).json({ message: 'Invalid email or password' });
+        }
+
+        const isValidPassword = await bcrypt.compare(password, writer.password);
+
+        if (!isValidPassword) {
+            return res.status(401).json({ message: 'Invalid email or password' });
+        }
+
+        const writerToken  = jwt.sign(
+            {id: writer.id},
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' } 
+        )
+
+        res.cookie('writerToken', writerToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+			maxAge: 36000000,
+        })
+
+        res.json({
+            status: 200,
+            message: "Writer logged in successfully",
+            writerToken
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json()
+    }
+}
 
 module.exports = {
     allWriters,
     newWriter,
     getWriterById,
     updateWriter,
-    deleteWriter
+    deleteWriter,
+    passSetUp,
+    writerLogin
 }
 
