@@ -321,6 +321,8 @@ async function writerLogin(req, res, next){
     }
 }
 
+5
+
 module.exports = {
     allWriters,
     newWriter,

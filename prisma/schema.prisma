@@ -143,6 +143,7 @@ model Assignment {
   client        Client     @relation(fields: [clientId], references: [id]) // Add this line to establish the relationship
   clientId      Int        
   delegation    Delegation?
+  submission    Submission?
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
   status        AssignmentStatus @default(CREATED)
@@ -160,5 +161,16 @@ model Delegation {
   remarks         String?
   submissionDate  DateTime?
   reviewDate      DateTime?
+}
+
+model Submission{
+  id                Int        @id @default(autoincrement())
+  assignment        Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade) 
+  assignmentId      Int
+  document          String
+  assignment        Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  assignmentId      Int        @unique
+  comments          String?
+
 }
 
