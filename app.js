@@ -10,7 +10,7 @@ const clientRoutes = require('./src/routes/clientsRoutes')
 const adminRoutes = require('./src/routes/adminRoutes')
 const writerRoutes = require('./src/routes/writerRoutes')
 const assignmentRoutes = require('./src/routes/assignmentsRoutes')
-const { swaggerUi, swaggerDocs } = require('./src/config/swagger'); // Adjust the path accordingly
+const { swaggerUi, swaggerDocs } = require('./src/config/swagger'); 
 
 
 // Middleware
@@ -44,8 +44,6 @@ appOne.use('/api/writer', writerRoutes)
 appOne.use('/api/assignments', assignmentRoutes)
 
 appOne.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
-
-
 
 
 appOne.get('/',(req,res)=>{

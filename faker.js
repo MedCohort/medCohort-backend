@@ -21,20 +21,20 @@ const prisma = new PrismaClient()
 
 
 
-// async function AdminFaker(nums) {
+async function AdminFaker(nums) {
 
-//     for(let i = 0;i < nums; i++){
-//         const client = await prisma.admin.create({
-//             data: {
-//                 name: faker.internet.userName(),
-//                 email: faker.internet.email(),
-//                 password: faker.internet.password(),
-//                 lastLogin: faker.date.past(),
-//             },
-//         })
-//         console.log(' created Admin:', client)
-//     }
-// }
+    for(let i = 0;i < nums; i++){
+        const client = await prisma.admin.create({
+            data: {
+                name: faker.internet.userName(),
+                email: faker.internet.email(),
+                password: faker.internet.password(),
+                lastLogin: faker.date.past(),
+            },
+        })
+        console.log(' created Admin:', client)
+    }
+}
 
 
 
@@ -137,15 +137,26 @@ async function WriterFaker(nums) {
 
 
 
-const clients = 7
+const writers = 7
+const admin = 1
 
 
-WriterFaker(clients)
+
+AdminFaker(admin)
     .catch((error) => {
             console.error('Error generating fake data:', error);
         })
     .finally(async () => {
             await prisma.$disconnect();
         });
+
+WriterFaker(writers)
+    .catch((error) => {
+            console.error('Error generating fake data:', error);
+        })
+    .finally(async () => {
+            await prisma.$disconnect();
+        });
+
 
 
