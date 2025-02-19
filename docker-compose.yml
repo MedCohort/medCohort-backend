@@ -9,9 +9,13 @@ services:
        - "3000:3000"
       environment:
         DATABASE_URL: ${DATABASE_URL}
+      volumes:
+        - .:/app
+        - ./logs:/app/logs
       depends_on:
         - db
-    
+      restart: always
+
     db:
       image: postgres:14
       environment:
