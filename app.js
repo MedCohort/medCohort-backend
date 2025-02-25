@@ -49,7 +49,7 @@ appOne.use(cors({
 appOne.use(metricsMiddleware);
 
 // prometheus metrics route
-app.get('/metrics', async (req, res) => {
+appOne.get('/metrics', async (req, res) => {
   res.setHeader('Content-Type', register.contentType);
   res.end(await register.metrics());
 });

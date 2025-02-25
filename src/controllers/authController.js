@@ -1,4 +1,7 @@
 require('dotenv').config();
+const logger = require('.././config/logger');
+
+
 
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -39,9 +42,9 @@ async function SendWelcomeEmail(userEmail, Username) {
 	try {
 		// Send the email using the transporter
 		let info = await transporter.sendMail(message);
-		console.log('Email sent: ', info.response);
+		logger.info('Email sent: ', info.response);
 	} catch (error) {
-		console.error('Error sending email: ', error);
+		logger.error('Error sending email: ', error);
 	}
 }
 
@@ -58,9 +61,9 @@ async function SendResetPasswordEmail(userEmail, resetLink) {
 
 	try {
 		await transporter.sendMail(message);
-		console.log('Reset password email sent');
+		logger.info('Reset password email sent');
 	} catch (error) {
-		console.error('Error sending email: ', error);
+		logger.error('Error sending email: ', error);
 	}
 }
 
@@ -82,6 +85,7 @@ async function newClient(req, res, next) {
 	
 
 	try {
+		logger.info("Sign up step 1")
 		const userExists = await prisma.client.findUnique({
 			where: { email },
 		});
@@ -202,7 +206,7 @@ async function requestResetPassword(req, res) {
 	const token = jwt.sign({ email: client.email }, process.env.JWT_SECRET, {
 		expiresIn: '1h',
 	});
-	console.log(token);
+	logger.info(token);
 	const resetLink = `http://localhost:3000/auth/reset-password/{token}`;
 
 	await prisma.client.update({
@@ -225,7 +229,7 @@ async function login(req, res) {
 	if (!client) {
 		return res.status(401).json({ message: 'Invalid credentials' });
 	}
-
+	logger.info("Client account found")
 	const isValidPassword = await bcrypt.compare(password, client.password);
 	if (!isValidPassword) {
 		return res.status(401).json({ message: 'Invalid credentials' });
@@ -285,7 +289,7 @@ const logOut = (req, res) => {
 const checkAuth = (req, res) => {
 	const token = req.cookies.token;
 
-	// console.log('Token availablity(checkAuth):', token);
+	// logger.info('Token availablity(checkAuth):', token);
 
 	if (!token) {
 		return res
