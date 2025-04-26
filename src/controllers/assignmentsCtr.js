@@ -1,12 +1,14 @@
 const {PrismaClient} = require('@prisma/client');
+const logger = require('.././config/logger');
+
 
 
 const prisma = new PrismaClient
 
 async function allAssignments(req, res, next) {
      try{
+            logger.info('Fetching all assignments')
             const assignments = await prisma.assignment.findMany();
-            console.log("Found %d assignments",assignments.length);
 
             res.json({
                 status: 200,
@@ -17,7 +19,7 @@ async function allAssignments(req, res, next) {
             })
      }
      catch(e){
-         console.error(e)
+         logger.error(e)
          res.status(500).json({ message: 'Failed to fetch assignments' })
      }
 }
@@ -36,7 +38,7 @@ async function getAssignmentsById(req,res,next){
             assignment: assgmnt
         })
     } catch (error) {
-        console.error(error)
+        logger.error(error)
         res.status(500).json({ message: 'Failed to fetch assignments' })
     }
 }
@@ -79,7 +81,7 @@ async function newAssignment(req, res, next) {
             assignment,
         });
     } catch (error) {
-        console.error(error);
+        logger.error(error);
         res.status(500).json({ message: 'Internal server error' });
     }
 }
@@ -114,7 +116,7 @@ async function updateAssignment(req, res, next) {
             assignment,
         });
     } catch (error) {
-        console.error(error);
+        logger.error(error);
         res.status(500).json({ message: 'Internal server error' });
     }
 }
@@ -138,13 +140,13 @@ async function deleteAssignment(req, res, next) {
 
         res.status(204).json({ message: 'Assignment deleted successfully' });
     } catch (error) {
-        console.error(error)
+        logger.error(error)
         res.status(500).json({ message: 'Failed to delete assignments' })
     }
 }
 
 async function testAssignment(req, res, next) {
-    console.log("test post")
+    logger.log("test post")
     res.json({message: 'test post'})
 }
 

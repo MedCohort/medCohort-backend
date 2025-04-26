@@ -36,8 +36,8 @@ router.get('/allClient', clients.allClient);
  *         description: Internal server error
  */
 router.get(
-    '/getClient',
-    passportConfig.authenticate('writer-jwt', { session: false }),
+    '/getClient/:id',
+    passportConfig.authenticate('admin-jwt', { session: false }),
     clients.getClientById
 );
 

@@ -4,6 +4,8 @@ const bcrypt = require('bcryptjs');
 const { write } = require('fs');
 const { send } = require('process');
 const nodemailer = require('nodemailer');
+const jwt = require('jsonwebtoken');
+
 
 
 
@@ -65,8 +67,8 @@ async function allWriters(req, res, next) {
         console.log(err);
         console.log('test');
         res.status(500).json({
-            message: "Internal server error", // More appropriate error message
-            error: err.message // Optional: include error message for debugging
+            message: "Internal server error", 
+            error: err.message 
         });
     }
 }
@@ -113,25 +115,37 @@ async function newWriter(req,res,next) {
         })
         console.log('Writer created')
 
-        const writerToken  = jwt.sign(
-            {email: writer.email},
-            process.env.JWT_SECRET,
-            { expiresIn: '1h' } 
-        )
+        try {
+            const writerToken = jwt.sign(
+                { email: writer.email },
+                process.env.JWT_SECRET,
+                { expiresIn: '1h' }
+            );
+            console.log(writerToken);
+        } catch (error) {
+            console.log("error creating writer")
+            console.error('Error generating token:', error);
+        }
         
         console.log(writerToken);
 
-        const welcomelink = `http://localhost:3000/api/writer/resetpassword/{writerToken}`
+        const welcomelink = `http://localhost:3000/api/writer/resetpassword/${writerToken}`
+        
+        try {
+            // await prisma.writer.update({
+            //     where: { email: writer.email },
+            //     data: {
+            //         resetPasswordToken: writerToken,
+            //         resetPasswordExpires: new Date(Date.now() + 3600000), 
+            //     },
+            // });
 
-        await prisma.writer.update({
-            where: { email: writer.email },
-            data: {
-                resetPasswordToken: writerToken,
-                resetPasswordExpires: new Date(Date.now() + 3600000), 
-            },
-        });
+            SendWelcomeEmailAndSetPassword(writer.email,writer.name, welcomelink)
+        } catch (error) {
+            console.error('error sending email!', error);
 
-        SendWelcomeEmailAndSetPassword(writer.email,writer.name, welcomelink)
+        }
+        
 
 
         res.status(201).json({
@@ -321,7 +335,44 @@ async function writerLogin(req, res, next){
     }
 }
 
-5
+async function createSubmission(req,res,next){
+    const { writerId, assignmentId } = req.params;
+    
+    const { document, comments } = req.body;
+
+    try {
+        const writer = await prisma.writer.findUnique({
+            where: { id: parseInt(writerId, 10) },
+        });
+
+        const assignment = await prisma.assignment.findUnique({
+            where: { id: parseInt(assignmentId, 10) },
+        })
+
+        if (!writer || !assignment) {
+            return res.status(404).json({ message: 'Invalid response.' });
+        }
+
+        const submission = await prisma.submission.create({
+            data: {
+                writerId: writer.id,
+                assignmentId: assignment.id,
+                comments: comments,
+                document: document
+
+            },
+        })
+
+        res.status(201).json({
+            message: "Submission created successfully",
+            submission
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}
 
 module.exports = {
     allWriters,
@@ -330,6 +381,7 @@ module.exports = {
     updateWriter,
     deleteWriter,
     passSetUp,
-    writerLogin
+    writerLogin,
+    createSubmission
 }
 
