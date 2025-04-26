@@ -1,4 +1,4 @@
-# MEDCOHORT
+# MEDCOHORT (Release)
 
 ## Overview
 MEDCOHORT is a web application designed to manage clients, writers, admins, and assignments. It utilizes Node.js, Express, and Prisma for the backend, with PostgreSQL as the database. The application includes features for user authentication, assignment management, and email notifications.
