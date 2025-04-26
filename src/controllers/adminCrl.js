@@ -193,6 +193,29 @@ async function newAdmin(req,res,next) {
 
 // }
 
+
+async function getAdminById(req,res,next) {
+    try {
+		const admin = await prisma.admin.findUnique({
+			where: { id: parseInt(req.user.id) },
+			include: {
+				writers: true,
+			}
+		});
+		if (!admin) {
+			return res.status(404).json({ message: 'Client not found' });
+		}
+		res.json({
+			status: 200,
+			message: 'Admin retrieved successfully',
+			admin,
+		});
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({ message: 'Internal server error' });
+	}
+}
+
 async function adminLogin(req, res, next) {
     const {email, password } = req.body;
 
@@ -326,5 +349,6 @@ module.exports = {
     adminLogin,
     adminDashView,
     testPost,
-    delegateAssgnmt
+    delegateAssgnmt,
+    getAdminById
 }

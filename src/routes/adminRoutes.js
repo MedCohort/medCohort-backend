@@ -79,6 +79,11 @@ router.get('/dash', (req, res, next) => {
     })(req, res, next);
 }, adminController.adminDashView);
 
+router.get('/getAdmin',
+    passport.authenticate('admin-jwt', { session: false }),
+    adminController.getAdminById
+)
+
 
 router.post('/delegate' , (req, res, next) => {
         passport.authenticate('admin-jwt', { session: false }, (err, admin, info) => {

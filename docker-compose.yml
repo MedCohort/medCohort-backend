@@ -1,4 +1,3 @@
-version: '3.8'
 
 services: 
     app:
@@ -9,9 +8,28 @@ services:
        - "3000:3000"
       environment:
         DATABASE_URL: ${DATABASE_URL}
+      volumes:
+        - .:/app
+        - ./logs:/app/logs
       depends_on:
         - db
-    
+      restart: always
+
+    prometheus:
+      image: prom/prometheus
+      volumes:
+        - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      ports:
+        - "9090:9090"
+    grafana:
+      image: grafana/grafana
+      ports:
+       - "3001:3000"
+      volumes:
+       - grafana-data:/var/lib/grafana
+      depends_on:
+       - prometheus
+
     db:
       image: postgres:14
       environment:
@@ -19,9 +37,10 @@ services:
         POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
         POSTGRES_DB: ${POSTGRES_DB}
       ports:
-        - "5432:5432"
+        - "5411:5432"
       volumes:
         - postgres-data:/var/lib/postgresql/data
 
 volumes:
-  postgres-data: 
+  postgres-data:
+  grafana-data: 
