@@ -1,3 +1,4 @@
+
 services:
   app:
     build:
@@ -6,14 +7,12 @@ services:
     ports:
       - "3000:3000"
     environment:
-      DATABASE_URL: ${DATABASE_URL}
+      DATABASE_URL: "postgresql://binamin:binamin14@db:5432/medcohort?schema=public"
     volumes:
       - ./logs:/app/logs
     depends_on:
       - db
     restart: always
-    env_file:
-      - .env.production
 
   prometheus:
     image: prom/prometheus
@@ -34,9 +33,9 @@ services:
   db:
     image: postgres:14
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: "binamin"
+      POSTGRES_PASSWORD: "binamin14"
+      POSTGRES_DB: "medcohort"
     ports:
       - "5411:5432"
     volumes:
