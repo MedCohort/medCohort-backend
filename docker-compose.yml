@@ -1,46 +1,58 @@
 
-services: 
-    app:
-      build:
-        context: .
-        dockerfile: Dockerfile
-      ports:
-       - "3000:3000"
-      environment:
-        DATABASE_URL: ${DATABASE_URL}
-      volumes:
-        - .:/app
-        - ./logs:/app/logs
-      depends_on:
-        - db
-      restart: always
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: "postgresql://binamin:binamin14@db:5432/medcohort?schema=public"
+    volumes:
+      - ./logs:/app/logs
+    depends_on:
+      - db
+    restart: always
 
-    prometheus:
-      image: prom/prometheus
-      volumes:
-        - ./prometheus.yml:/etc/prometheus/prometheus.yml
-      ports:
-        - "9090:9090"
-    grafana:
-      image: grafana/grafana
-      ports:
-       - "3001:3000"
-      volumes:
-       - grafana-data:/var/lib/grafana
-      depends_on:
-       - prometheus
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
 
-    db:
-      image: postgres:14
-      environment:
-        POSTGRES_USER: ${POSTGRES_USER}
-        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-        POSTGRES_DB: ${POSTGRES_DB}
-      ports:
-        - "5411:5432"
-      volumes:
-        - postgres-data:/var/lib/postgresql/data
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3001:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+    depends_on:
+      - prometheus
+
+  db:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: "binamin"
+      POSTGRES_PASSWORD: "binamin14"
+      POSTGRES_DB: "medcohort"
+    ports:
+      - "5411:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
 
 volumes:
   postgres-data:
-  grafana-data: 
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/flashdrive/postgres-data
+
+  grafana-data:
