@@ -47,6 +47,12 @@ appOne.use(cors({
 
 // Metrics middleware
 appOne.use(metricsMiddleware);
+// Error handler middleware
+appOne.use((err, req, res, next) => {
+  logger.error(`❌ ${err.message} - ${req.method} ${req.originalUrl}`);
+  res.status(500).json({ error: 'Internal Server Error' });
+});
+
 
 // prometheus metrics route
 appOne.get('/metrics', async (req, res) => {
@@ -54,7 +60,17 @@ appOne.get('/metrics', async (req, res) => {
   res.end(await register.metrics());
 });
 
-// Swagger documentation route
+// test error for logging
+
+appOne.get('/test-error', (req, res) => {
+  logger.error('🔴 Logging test error into error.log');
+  res.status(500).send('Triggered error');
+});
+
+logger.error("🔥 Forced error log for testing");
+logger.info("ℹ️ Forced info log for testing");
+
+
 
 // Routes
 appOne.use('/auth', authRoutes)
